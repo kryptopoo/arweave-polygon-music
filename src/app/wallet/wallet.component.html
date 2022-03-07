@@ -1,0 +1,11 @@
+<button class="bg-neutral-800 shadow rounded-full py-2 px-4 flex items-center" *ngIf="address == null" (click)="connect()">
+  <i class="material-icons mr-1">account_balance_wallet</i>
+  <div class="text-sm">connect wallet</div>
+
+</button>
+<button class="bg-neutral-800 rounded-full py-2 px-4 flex items-center" *ngIf="address != null" (click)="disconnect()">
+  <i class="material-icons mr-1">account_balance_wallet</i>
+  <div class="text-sm">{{address}} <span class="rounded-md ml-2 py-1 px-2 bg-green-600 text-sm">{{balance}} MATIC</span></div>
+</button>
+
+

@@ -1,0 +1,88 @@
+<!-- header -->
+<div class="w-full sticky top-0 py-4 px-6 flex items-center justify-between">
+    <div class="flex">
+        <div class="relative text-gray-900">
+            <span class="absolute inset-y-0 left-0 flex items-center pl-2">
+                <button class="p-1">
+                    <svg fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                        stroke-width="2" viewBox="0 0 24 24" class="w-6 h-6">
+                        <path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </button>
+            </span>
+            <input type="search" (keydown.enter)="enterSearch($event)"
+                class="w-80 py-2 text-sm rounded-full pl-10 bg-white focus:outline-none active:outline-none border-none focus:ring-0"
+                placeholder="artists, songs or playlists..." autocomplete="off">
+        </div>
+    </div>
+    <div>
+        <app-wallet></app-wallet>
+    </div>
+</div>
+
+<!-- browse all -->
+<div class="px-6 py-3" *ngIf="!searchGenreValue && !searchTextValue">
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-white">Browse all</h1>
+    </div>
+
+    <div class="w-full grid gap-6 grid-cols-8">
+        <div class="w-48 h-48 relative rounded-lg overflow-hidden hover:cursor-pointer" *ngFor="let genre of genres"
+            [style.background-color]="genre.bgColor" [routerLink]="['/search']" [queryParams]="{g: genre.name}">
+            <a class="w-full h-auto ">
+                <img [src]="genre.imgUrl" class="h-24 w-24 absolute -bottom-1 -right-4"
+                    style="transform: rotate(25deg)" />
+                <h3 class="text-2xl font-semibold absolute top-2 left-2">{{genre.name}}</h3>
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="px-6 py-3" *ngIf="searchGenreValue || searchTextValue">
+    <div class="mb-6">
+        <h1 *ngIf="searchGenreValue" class="text-2xl font-semibold text-white">Genre: {{searchGenreValue}}</h1>
+        <h1 *ngIf="searchTextValue" class="text-2xl font-semibold text-white">Search: {{searchTextValue}}</h1>
+    </div>
+
+    <div class="" *ngIf="foundAlbums.length > 0 || foundSongs.length > 0">
+        <div class="" *ngIf="foundSongs.length > 0">
+            <div class="mb-6">
+                <h1 class="text-2xl font-semibold text-white">Songs: </h1>
+            </div>
+            <app-data-grid [items]="foundSongs"></app-data-grid>
+        </div>
+        <div class="" *ngIf="foundAlbums.length > 0">
+            <div class="mb-6">
+                <h1 class="text-2xl font-semibold text-white">Albums: </h1>
+            </div>
+            <app-data-grid [items]="foundAlbums"></app-data-grid>
+        </div>
+    </div>
+
+    <div class="" *ngIf="foundAlbums.length == 0 && foundSongs.length == 0">
+        <div class="w-full mt-44 flex flex-col items-center justify-center">
+            <div class="text-3xl font-semibold">No results found for "{{searchGenreValue}}"</div>
+            <div class="text-base mt-2">Please make sure your words are spelled correctly or use less or
+                different keywords.</div>
+        </div>
+    </div>
+</div>
+
+<!-- <div class="px-6 py-3" *ngIf="searchTextValue">
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-white">Search: {{searchTextValue}}</h1>
+    </div>
+
+    <div class="" *ngIf="foundSongs.length > 0">
+        <div class="mb-6">
+            <h1 class="text-2xl font-semibold text-white">Songs: </h1>
+        </div>
+        <app-data-grid [items]="foundSongs"></app-data-grid>
+    </div>
+    <div class="" *ngIf="foundAlbums.length > 0">
+        <div class="mb-6">
+            <h1 class="text-2xl font-semibold text-white">Albums: </h1>
+        </div>
+        <app-data-grid [items]="foundAlbums"></app-data-grid>
+    </div>
+</div> -->

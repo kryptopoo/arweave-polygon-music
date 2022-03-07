@@ -1,0 +1,75 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+@import 'material-icons/iconfont/material-icons.css';
+
+html,
+body {
+    color: whitesmoke;
+    font-family: spotify-circular, Helvetica, Arial, sans-serif;
+}
+// html, body { height: 100%; }
+// body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+:root {
+    --glue-font-weight-normal: 400;
+    --glue-font-weight-bold: 700;
+    --glue-font-weight-black: 900;
+    --nav-bar-width: 232px;
+    --background-noise: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIj48ZmlsdGVyIGlkPSJhIiB4PSIwIiB5PSIwIj48ZmVUdXJidWxlbmNlIHR5cGU9ImZyYWN0YWxOb2lzZSIgYmFzZUZyZXF1ZW5jeT0iLjc1IiBzdGl0Y2hUaWxlcz0ic3RpdGNoIi8+PGZlQ29sb3JNYXRyaXggdHlwZT0ic2F0dXJhdGUiIHZhbHVlcz0iMCIvPjwvZmlsdGVyPjxwYXRoIGZpbHRlcj0idXJsKCNhKSIgb3BhY2l0eT0iLjA1IiBkPSJNMCAwaDMwMHYzMDBIMHoiLz48L3N2Zz4=) !important;
+    --buddy-feed-width: 270px;
+}
+
+.playlist-header {
+    height: 30vh;
+    max-height: 500px;
+    min-height: 340px;
+    color: #fff;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    max-width: none;
+    overflow: hidden;
+    padding-bottom: 24px;
+    position: relative;
+    margin-top: -4.5rem;
+}
+
+.bg-playlist-header {
+    display: block;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+
+// .mat-form-field-wrapper {
+//     padding-bottom: 0.25em !important;
+// }
+
+.mat-form-field-appearance-outline .mat-form-field-wrapper {
+    padding-bottom: 0.25em !important;
+}
+.mat-form-field-appearance-outline .mat-form-field-flex {
+    margin-top: -0.5em !important;;
+}
+
+// audio::-webkit-media-controls-play-button,
+// audio::-webkit-media-controls-panel {
+//   background-color: #a0276e;
+//   color: #a0276e;
+// }
+
+.snackbar-success {
+    color: green;
+}
+
+.snackbar-error {
+    color: red;
+}
+
+.bg-neutral-850 {
+    // 23 38   
+    background-color: rgb(30, 30, 30);
+}

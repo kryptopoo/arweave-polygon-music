@@ -1,0 +1,24 @@
+<!-- header -->
+<div class="w-full sticky top-0 py-4 px-6 flex items-center justify-between">
+    <div class="flex">
+
+    </div>
+    <div>
+        <app-wallet></app-wallet>
+    </div>
+</div>
+<div class="px-6 py-3">
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-white">New albums</h1>
+    </div>
+
+    <app-data-grid [items]="albums" *ngIf="albums.length > 0"></app-data-grid>
+</div>
+<div class="px-6 py-3">
+    <div class="mb-6">
+        <h1 class="text-2xl font-semibold text-white">New songs</h1>
+    </div>
+
+    <app-data-grid [items]="albums" *ngIf="songs.length > 0"></app-data-grid>
+</div>
+
