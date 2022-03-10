@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { ArweaveGraphqlService, ArweaveGraphqlTag } from '../arweave-graphql.service';
+import { ArweaveGraphqlService, ArweaveGraphqlTag } from '../services/arweave-graphql.service';
 import { DataGridItem } from '../data-grid/data-grid.component';
 
 @Component({
@@ -9,6 +9,7 @@ import { DataGridItem } from '../data-grid/data-grid.component';
     styleUrls: ['./search.component.scss']
 })
 export class SearchComponent implements OnInit {
+    loading: boolean = false;
     showResult: boolean = false;
     genres: any[] = new Array();
 
@@ -25,21 +26,16 @@ export class SearchComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        // console.log(this.route.snapshot.queryParams.v) // search by text
-        // console.log(this.route.snapshot.queryParams.g) // search by genre
-
         this.route.queryParams.subscribe((params) => {
             this.searchTextValue = this.route.snapshot.queryParams.v;
             this.searchGenreValue = this.route.snapshot.queryParams.g;
 
-            console.log(this.searchTextValue, this.searchGenreValue);
             if (this.searchGenreValue) {
                 this.searchByGenre();
             }
         });
 
         // get genres
-
         this.genres = [
             { name: 'Pop', imgUrl: 'https://t.scdn.co/images/0a74d96e091a495bb09c0d83210910c3', bgColor: 'rgb(141, 103, 171)' },
             { name: 'Country', imgUrl: 'https://i.scdn.co/image/ab67706f00000002a980b152e708b33c6516d848', bgColor: 'rgb(225, 51, 0)' },
@@ -63,27 +59,30 @@ export class SearchComponent implements OnInit {
             { name: 'TV & Movies', imgUrl: 'https://i.scdn.co/image/ab67706f000000026abff8de68c75470ea8f0665', bgColor: 'rgb(175, 40, 150)' },
 
             { name: 'Vietnamese Music', imgUrl: 'https://t.scdn.co/images/841d524163d94e98b0becfd8c920efde.jpeg', bgColor: 'rgb(195, 240, 200)' },
-            { name: 'K-Pop', imgUrl: 'https://i.scdn.co/image/ab67706f00000002978b9f4a4f40b430fd0d837e', bgColor: 'rgb(20, 138, 8)' },
-            { name: 'Chill', imgUrl: 'https://i.scdn.co/image/ab67706f00000002c414e7daf34690c9f983f76e', bgColor: 'rgb(71, 125, 149)' },
-            { name: 'Mood', imgUrl: 'https://i.scdn.co/image/ab67706f00000002aa93fe4e8c2d24fc62556cba', bgColor: 'rgb(141, 103, 171)' },
-            { name: 'Indie', imgUrl: 'https://i.scdn.co/image/ab67706f000000025f7327d3fdc71af27917adba', bgColor: 'rgb(96, 129, 8)' },
-            { name: 'Latin', imgUrl: 'https://t.scdn.co/images/6a48e36b373a4d879a9340076db03a7b', bgColor: 'rgb(225, 17, 139)' }
+            { name: 'K-Pop', imgUrl: 'https://i.scdn.co/image/ab67706f00000002978b9f4a4f40b430fd0d837e', bgColor: 'rgb(20, 138, 8)' }
+            // { name: 'Chill', imgUrl: 'https://i.scdn.co/image/ab67706f00000002c414e7daf34690c9f983f76e', bgColor: 'rgb(71, 125, 149)' },
+            // { name: 'Mood', imgUrl: 'https://i.scdn.co/image/ab67706f00000002aa93fe4e8c2d24fc62556cba', bgColor: 'rgb(141, 103, 171)' },
+            // { name: 'Indie', imgUrl: 'https://i.scdn.co/image/ab67706f000000025f7327d3fdc71af27917adba', bgColor: 'rgb(96, 129, 8)' },
+            // { name: 'Latin', imgUrl: 'https://t.scdn.co/images/6a48e36b373a4d879a9340076db03a7b', bgColor: 'rgb(225, 17, 139)' }
         ];
     }
 
     enterSearch(event) {
+        this.searchGenreValue = null;
         this.searchTextValue = event.target.value;
         this.searchByText();
     }
 
     searchByGenre() {
+        this.loading = true;
+        this.searchTextValue = null;
         this.foundAlbums = [];
         this.foundSongs = [];
         this.arweaveGrapqlService
             .queryByTags([
                 { name: 'Content-Type', values: ['application/json'] },
                 { name: 'Data-Type', values: ['album'] },
-                { name: 'Genre', values: [this.searchGenreValue.toLowerCase()] }
+                { name: 'Keyword-Genre', values: [this.searchGenreValue.toLowerCase()] }
             ])
             .subscribe((rs) => {
                 var edges: any[] = rs.data.transactions.edges;
@@ -92,10 +91,13 @@ export class SearchComponent implements OnInit {
                     this.foundAlbums.push(dataGridItem);
                 });
                 console.log(this.foundAlbums);
+
+                this.loading = false;
             });
     }
 
     searchByText() {
+        this.loading = true;
         this.foundAlbums = [];
         this.foundSongs = [];
 
@@ -103,7 +105,7 @@ export class SearchComponent implements OnInit {
         this.arweaveGrapqlService
             .queryByTags([
                 { name: 'Data-Type', values: ['album'] },
-                { name: 'Title', values: [this.searchTextValue.toLowerCase()] }
+                { name: 'Keyword-Title', values: [this.searchTextValue.toLowerCase()] }
             ])
             .subscribe((rs) => {
                 var edges: any[] = rs.data.transactions.edges;
@@ -111,12 +113,14 @@ export class SearchComponent implements OnInit {
                     var dataGridItem = this.arweaveGrapqlService.bindNodeToDataGridItem(edge.node);
                     this.foundAlbums.push(dataGridItem);
                 });
+
+                this.loading = false;
             });
 
         this.arweaveGrapqlService
             .queryByTags([
                 { name: 'Data-Type', values: ['album'] },
-                { name: 'Artist', values: [this.searchTextValue.toLowerCase()] }
+                { name: 'Keyword-Artist', values: [this.searchTextValue.toLowerCase()] }
             ])
             .subscribe((rs) => {
                 var edges: any[] = rs.data.transactions.edges;
@@ -124,13 +128,15 @@ export class SearchComponent implements OnInit {
                     var dataGridItem = this.arweaveGrapqlService.bindNodeToDataGridItem(edge.node);
                     this.foundAlbums.push(dataGridItem);
                 });
+
+                this.loading = false;
             });
 
         // search songs
         this.arweaveGrapqlService
             .queryByTags([
                 { name: 'Data-Type', values: ['song'] },
-                { name: 'Title', values: [this.searchTextValue.toLowerCase()] }
+                { name: 'Keyword-Title', values: [this.searchTextValue.toLowerCase()] }
             ])
             .subscribe((rs) => {
                 var edges: any[] = rs.data.transactions.edges;
@@ -138,12 +144,14 @@ export class SearchComponent implements OnInit {
                     var dataGridItem = this.arweaveGrapqlService.bindNodeToDataGridItem(edge.node);
                     this.foundSongs.push(dataGridItem);
                 });
+
+                this.loading = false;
             });
 
         this.arweaveGrapqlService
             .queryByTags([
                 { name: 'Data-Type', values: ['song'] },
-                { name: 'Artist', values: [this.searchTextValue.toLowerCase()] }
+                { name: 'Keyword-Artist', values: [this.searchTextValue.toLowerCase()] }
             ])
             .subscribe((rs) => {
                 var edges: any[] = rs.data.transactions.edges;
@@ -151,6 +159,8 @@ export class SearchComponent implements OnInit {
                     var dataGridItem = this.arweaveGrapqlService.bindNodeToDataGridItem(edge.node);
                     this.foundSongs.push(dataGridItem);
                 });
+
+                this.loading = false;
             });
     }
 }

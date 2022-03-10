@@ -1,0 +1,51 @@
+<!-- header -->
+<div class="w-full sticky top-0 py-4 px-6 flex items-center justify-between">
+    <div>
+        <h1 class="text-2xl font-semibold">Transaction History</h1>
+    </div>
+    <div>
+        <app-wallet #walletCompoment></app-wallet>
+    </div>
+</div>
+
+<!-- content -->
+<div class="overflow-y-scroll scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900"
+    style="height: 80vh">
+
+    <div class="mx-6 flex items-center text-sm mb-4 border-b-neutral-700">
+        <div class="w-24 flex items-center justify-center ">
+            Time
+        </div>
+        <div class="w-32 flex items-center justify-center">
+            Type
+        </div>
+        <div class="w-32 flex items-center justify-center">
+            Content Type
+        </div>
+        <div class="w-96 flex items-center justify-center">
+            Transaction ID
+        </div>
+        <div class="w-96 flex items-center justify-center">
+            Description
+        </div>
+    </div>
+
+    <div class="mx-6 flex items-center text-sm" *ngFor="let tx of transactions; let i = index">
+        <div class="w-24 ">
+            {{tx.time}}
+        </div>
+        <div class="w-32">
+            {{tx.type}}
+        </div>
+        <div class="w-32">
+            {{tx.contentType}}
+        </div>
+        <div class="w-96">
+            <a target="_blank" href="https://arweave.net/{{tx.txId}}">{{tx.txId}}</a>
+        </div>
+        <div class="w-96">
+            {{tx.description}}
+        </div>
+    </div>
+
+</div>

@@ -1,7 +1,6 @@
 <!-- header -->
 <div class="w-full sticky top-0 py-4 px-6 flex items-center justify-between">
-    <div>
-    </div>
+    <div></div>
     <div>
         <app-wallet></app-wallet>
     </div>
@@ -9,44 +8,53 @@
 
 <div>
     <div class="playlist-header">
-        <div class="bg-playlist-header" style="background-color: rgb(152, 168, 200);"></div>
+        <div class="bg-playlist-header" style="background-color: rgb(64, 64, 64)"></div>
         <div class="bg-playlist-header"
-            style="background: linear-gradient(transparent 0, rgba(0, 0, 0, 0.5) 100%), var(--background-noise);"></div>
-        <div class="flex items-end ml-8" style="z-index: 0;">
+            style="background: linear-gradient(transparent 0, rgba(0, 0, 0, 0.5) 100%), var(--background-noise)"></div>
+        <div class="flex items-end ml-8" style="z-index: 0">
             <div>
                 <img [src]="playlist.thumbnail" class="h-48 w-48 mr-4 shadow-md" />
             </div>
             <div>
-                <div class="text-sm">Playlist</div>
-                <div class="text-6xl font-bold mt-2 mb-4">{{playlist.title}}</div>
-                <div class="text-base">{{playlist.description}}</div>
-                <div class="text-sm"><span class="font-semibold">{{playlist.creator}}</span> • {{playlist.songs.length}} songs • <span class="text-neutral-300">{{playlist.duration}}</span></div>
-            </div>
-        </div>
-    </div>
-    <div class="px-8 py-3 flex">
-        <button><i class="material-icons text-6xl text-green-500" (click)="playPlaylist()">play_circle_filled</i></button>
-    </div>
-    <div class="px-8 py-3">
-        <div class="flex p-2">
-            <div class="w-12 text-center">#</div>
-            <div class="w-2/4">Title</div>
-            <div>Duration</div>
-        </div>
-        <div class="border-b border-neutral-800 mb-4"> </div>
-        <div class="flex p-2 hover:bg-neutral-700 hover:rounded-sm" *ngFor="let song of playlist.songs; let i = index">
-
-            <div class="w-12 flex items-center justify-center">
-                {{i+1}}
-            </div>
-            <div class="w-2/4 flex">
-                <img [src]="song.thumbnail" class="w-10 h-10 mr-4" />
-                <div>
-                    <div class="text-base">{{song.title}}</div>
-                    <div class="text-sm text-neutral-400">{{song.artist}}</div>
+                <div class="text-sm capitalize">{{ playlist.type }}</div>
+                <div class="text-6xl font-bold mt-2 mb-4">{{ playlist.title }}</div>
+                <div class="text-base">{{ playlist.description }}</div>
+                <div class="text-sm">
+                    <span class="font-semibold">{{ playlist.owner }}</span> • {{ playlist.songs.length }} songs •
+                    <span class="text-neutral-300">{{ playlist.duration }}</span>
                 </div>
             </div>
-            <div class="flex items-center  justify-center">{{song.duration}}</div>
         </div>
     </div>
+
+    <div class="overflow-y-scroll scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900"
+        style="height: 52vh;">
+        <div class="px-8 py-3 flex">
+            <button><i class="material-icons text-6xl text-green-500"
+                    (click)="playPlaylist()">play_circle_filled</i></button>
+        </div>
+        <div class="px-8">
+            <div class="flex p-2">
+                <div class="w-12 text-center">#</div>
+                <div class="w-2/4">Title</div>
+                <div>Duration</div>
+            </div>
+            <div class="border-b border-neutral-800 mb-4"></div>
+            <div class="flex p-2 hover:bg-neutral-700 hover:rounded-sm hover:cursor-pointer"
+                *ngFor="let song of playlist.songs; let i = index" (dblclick)="playSong(song)">
+                <div class="w-12 flex items-center justify-center">
+                    {{ i + 1 }}
+                </div>
+                <div class="w-2/4 flex">
+                    <img [src]="song.thumbnail" class="w-10 h-10 mr-4" />
+                    <div>
+                        <div class="text-base">{{ song.title }}</div>
+                        <div class="text-sm text-neutral-400">{{ song.artist }}</div>
+                    </div>
+                </div>
+                <div class="flex items-center justify-center">{{ song.duration }}</div>
+            </div>
+        </div>
+    </div>
+
 </div>

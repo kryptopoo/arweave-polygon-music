@@ -1,11 +1,104 @@
-<button class="bg-neutral-800 shadow rounded-full py-2 px-4 flex items-center" *ngIf="address == null" (click)="connect()">
-  <i class="material-icons mr-1">account_balance_wallet</i>
-  <div class="text-sm">connect wallet</div>
-
+<button class="bg-neutral-800 shadow rounded-full py-2 px-4 flex items-center" *ngIf="address == null"
+    (click)="openConnectDialog()">
+    <i class="material-icons mr-1">account_balance_wallet</i>
+    <div class="text-sm">connect wallet</div>
 </button>
-<button class="bg-neutral-800 rounded-full py-2 px-4 flex items-center" *ngIf="address != null" (click)="disconnect()">
-  <i class="material-icons mr-1">account_balance_wallet</i>
-  <div class="text-sm">{{address}} <span class="rounded-md ml-2 py-1 px-2 bg-green-600 text-sm">{{balance}} MATIC</span></div>
+<button class="bg-neutral-800 rounded-full py-2 px-4 flex items-center" *ngIf="address != null"
+    (click)="openWalletDialog()">
+    <i class="material-icons mr-1">account_balance_wallet</i>
+    <div class="text-sm">
+        {{ shortAddress }} <span class="rounded-md ml-2 py-1 px-2 bg-green-600 text-sm">{{ balance.toFixed(2) }}
+            MATIC</span>
+    </div>
 </button>
 
+<ng-template #walletDialogRef>
+    <div>
+        <div class="flex items-start justify-between mb-4">
+            <h2 mat-dialog-title>Wallet</h2>
+            <button mat-icon-button mat-dialog-close class="-mt-2 -mr-2">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
 
+        <mat-dialog-content>
+            <div class="flex flex-col">
+                <div class="flex items-center mb-2">
+                    <i class="material-icons mr-4">account_balance_wallet</i>
+                    <div>{{ address }}</div>
+                </div>
+                <div class="flex items-center mb-2">
+                    <i class="material-icons mr-4">attach_money</i>
+                    <div>{{ balance.toFixed(4) }} MATIC</div>
+                </div>
+                <div class="flex items-center mb-2">
+                    <i class="material-icons mr-4">wifi</i>
+                    <div>{{ bunlderAddress }}</div>
+                </div>
+
+                <div class="mt-6">Fund/Withdraw balance</div>
+                <div class="flex flex-col py-1">
+                    <mat-form-field appearance="outline" color="accent" class="">
+                        <mat-label>Amount</mat-label>
+                        <input matInput type="number" placeholder="Amount" [value]="amount"
+                            (change)="amount = $event.target.value" />
+                    </mat-form-field>
+
+                    <div class="mt-2 flex justify-between text-sm">
+                        <button (click)="disconnect()"
+                            class="w-28 bg-red-600 text-white shadow rounded-full flex items-center justify-center p-2 ml-1">
+                            Disconnect
+                        </button>
+                        <div class="flex justify-end">
+                            <button (click)="fund()"
+                                class="w-24 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center p-2 ml-1">
+                                <mat-spinner class="mr-1" strokeWidth="3" [diameter]="20" color="accent"
+                                    *ngIf="loading.fund"></mat-spinner>
+                                <p>Fund</p>
+                            </button>
+                            <button (click)="withdraw()"
+                                class="w-24 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center p-2 ml-1">
+                                <mat-spinner class="mr-1" strokeWidth="3" [diameter]="20" color="accent"
+                                    *ngIf="loading.withdraw"></mat-spinner>
+                                <p>Withdraw</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </mat-dialog-content>
+    </div>
+</ng-template>
+
+<ng-template #connectDialogRef>
+    <div>
+        <div class="flex items-start justify-between mb-2">
+            <h2 mat-dialog-title>Connect</h2>
+            <button mat-icon-button mat-dialog-close class="-mt-2 -mr-2">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
+
+        <mat-dialog-content>
+            <div class="flex items-center w-96">
+                <img class="w-16 h-16" src="/assets/images/metamask.png" />
+                <div class="m-4">Make sure Metamask installed on browser already</div>
+            </div>
+
+            <div class="mt-6 mb-3 text-xl">Connect bundlers:</div>
+
+            <div class="flex flex-col text-2xl">
+                <button class="flex items-center mb-2 p-2 hover:bg-neutral-900" mat-dialog-close
+                    (click)="connect('node1.bundlr.network')">
+                    <i class="material-icons">keyboard_arrow_right</i>
+                    <div class="m-1">node1.bundlr.network</div>
+                </button>
+                <button class="flex items-center mb-2 p-2 hover:bg-neutral-900" mat-dialog-close
+                    (click)="connect('node2.bundlr.network')">
+                    <i class="material-icons">keyboard_arrow_right</i>
+                    <div class="m-1">node2.bundlr.network</div>
+                </button>
+            </div>
+        </mat-dialog-content>
+    </div>
+</ng-template>

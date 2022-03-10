@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { DataGridItem } from './data-grid/data-grid.component';
+import { DataGridItem } from './../data-grid/data-grid.component';
+import { environment } from '../../environments/environment';
 
 export interface ArweaveGraphqlTag {
     name: string;
@@ -18,8 +19,8 @@ export class ArweaveGraphqlService {
 
     queryByTags(tags: ArweaveGraphqlTag[], owner: string = ''): Observable<any> {
         {
-            tags.push({ name: 'App-Name', values: ['Arpomus'] });
-            tags.push({ name: 'App-Version', values: ['0.1.0'] });
+            tags.push({ name: 'App-Name', values: [environment.appName] });
+            //tags.push({ name: 'App-Version', values: [environment.appVersion] });
 
             let tagsJson = '';
             tagsJson += '[';
@@ -41,6 +42,9 @@ export class ArweaveGraphqlService {
                     tags {
                       name
                       value
+                    }
+                    owner {
+                      address
                     }
                   }
                 }
@@ -72,6 +76,9 @@ export class ArweaveGraphqlService {
                           name
                           value
                         }
+                        owner {
+                          address
+                        }
                     }
                 }
               }
@@ -91,11 +98,13 @@ export class ArweaveGraphqlService {
 
         var gridItem: DataGridItem = {
             id: node.id,
-            name: tags['Title'],
-            description: tags['Artist'],
+            name: tags['Title'] || tags['Name'],
+            description: tags['Artist'] || tags['Description'],
             thumbnail: `https://arweave.net/${tags['Thumbnail']}`,
             url: `https://arweave.net/${node.id}`,
-            type: tags['Data-Type']
+            type: tags['Data-Type'],
+            duration: tags['Duration'],
+            owner: node.owner.address
         };
 
         return gridItem;

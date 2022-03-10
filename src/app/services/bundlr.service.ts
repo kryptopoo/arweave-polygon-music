@@ -4,6 +4,8 @@ import { Web3Provider } from '@ethersproject/providers';
 import { WebBundlr } from '@bundlr-network/client';
 import BigNumber from 'bignumber.js';
 import { FundData } from '@bundlr-network/client/build/common/types';
+import { Subject } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 const connectWeb3 = async (connector: any) => {
     // if (provider) {
@@ -30,8 +32,12 @@ const currencyMap = {
 
 const providerMap = {
     MetaMask: async (c: any) => {
-        if (!(window as any)?.ethereum?.isMetaMask) return null;
-        await (window as any).ethereum.enable();
+        try {
+            if (!(window as any)?.ethereum?.isMetaMask) return null;
+            await (window as any).ethereum.enable();
+        } catch (e) {
+            alert('Make sure that Metamask is installed/unlocked and ready to use');
+        }
         return await connectWeb3((window as any).ethereum);
     }
 };
@@ -42,15 +48,15 @@ const providerMap = {
 export class BundlrService {
     providerName: string = 'MetaMask';
     currencyName: string = 'matic';
-    bundlerHttpAddress: string = 'https://node1.bundlr.network';
+    bundlerHttpAddress: string = 'https://node2.bundlr.network';
 
     private bundlr: WebBundlr = null;
+    connection$: Subject<boolean> = new Subject<boolean>();
 
-    constructor() {
-        //this.bundlr = new WebBundlr('http://node1.bundlr.network', 'MATIC', '74080a50c0b6bc436a1eae32b2214bd9df2b4877ad365901f277cd7ac97edd2b');
-    }
+    constructor() {}
 
-    initBundlr = async (): Promise<boolean> => {
+    connect = async (bundlerAddress: string): Promise<boolean> => {
+        this.bundlerHttpAddress = `https://${bundlerAddress}`;
         const providerFunc = providerMap[this.providerName]; // get provider entry
         const currency = currencyMap[this.currencyName]; // get currency entry
         const provider = await providerFunc(currency); //
@@ -80,6 +86,15 @@ export class BundlrService {
         return true;
     };
 
+    async disconnect() {
+        await (window as any).ethereum.request({
+            method: 'eth_requestAccounts',
+            params: [{ eth_accounts: {} }]
+        });
+        this.bundlr = null;
+        location.reload();
+    }
+
     isConnected() {
         return this.bundlr != null;
     }
@@ -94,12 +109,20 @@ export class BundlrService {
     }
 
     async getPrice(bytes: number): Promise<number> {
-        const price = await this.bundlr.getPrice(bytes);
-        return this.toDecimal(price);
+        try {
+            const price = await this.bundlr.getPrice(bytes);
+            return this.toDecimal(price);
+        } catch {
+            return 0;
+        }
     }
 
     async fund(amount: BigNumber): Promise<FundData> {
         return await this.bundlr.fund(amount);
+    }
+
+    async withdrawBalance(amount: BigNumber): Promise<any> {
+        return await this.bundlr.withdrawBalance(amount);
     }
 
     async upload(
@@ -109,16 +132,12 @@ export class BundlrService {
             value: string;
         }[]
     ) {
-        // const price: any = await this.bundlr.getPrice(data.length);
-        // // Get your current balance
-        // const balance: any = await this.bundlr.getLoadedBalance();
+        tags.push({ name: 'App-Name', value: environment.appName });
+        tags.push({ name: 'App-Version', value: environment.appVersion });
+        tags.push({ name: 'Unix-Time', value: Math.round(Date.now() / 1000).toString() });
+        tags.push({ name: 'Creator', value: this.getAddress() });
 
-        // // If you don't have enough balance for the upload
-        // if (price > balance) {
-        //     // Fund your account with the difference
-        //     // We multiply by 1.1 to make sure we don't run out of funds
-        //     await this.bundlr.fund((price - balance) * 1.1);
-        // }
+        const price = (await this.getPrice(data.length)).toFixed(6);
 
         return await this.bundlr.uploader.upload(data, tags);
     }
@@ -130,11 +149,11 @@ export class BundlrService {
     }
 
     // decimal -> atomic units
-    toAtomicUnits = (decimalValue: string | number) => {
+    toAtomicUnits = (decimalValue: string | number): BigNumber => {
         const conv = new BigNumber(decimalValue).multipliedBy(this.bundlr.currencyConfig.base[1]);
-        if (conv.isLessThan(1)) {
-            return 0;
-        }
+        // if (conv.isLessThan(1)) {
+        //     return new BigNumber(0);
+        // }
         return conv;
     };
 }

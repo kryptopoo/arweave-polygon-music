@@ -1,9 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { DomSanitizer } from '@angular/platform-browser';
 import * as id3 from 'id3js';
-import { totalmem } from 'os';
-import { BundlrService } from '../bundlr.service';
+import { totalmem, type } from 'os';
+import { BundlrService } from '../services/bundlr.service';
+import { DialogService } from '../services/dialog.service';
+import { WalletComponent } from '../wallet/wallet.component';
+import { environment } from './../../environments/environment';
+import { AngularFirestore } from '@angular/fire/compat/firestore';
 
 @Component({
     selector: 'app-upload',
@@ -11,11 +15,25 @@ import { BundlrService } from '../bundlr.service';
     styleUrls: ['./upload.component.scss']
 })
 export class UploadComponent implements OnInit {
-    album: any = { title: 'testing', artist: 'justin', genre: 'pop', description: 'for testing', thumbBuffer: null, songs: [] };
+    @ViewChild('walletCompoment', { static: false }) walletCompoment: WalletComponent;
 
-    constructor(private _bundlrService: BundlrService, private _snackBar: MatSnackBar) {}
+    walletConnected: boolean = false;
+    thumbBuffer: Buffer = null;
+    album: any = { title: '', artist: '', genre: '', description: '', songs: [] };
 
-    async ngOnInit(): Promise<void> {}
+    constructor(
+        private _firestore: AngularFirestore,
+        private _bundlrService: BundlrService,
+        private _snackBar: MatSnackBar,
+        private _dialogService: DialogService
+    ) {}
+
+    ngOnInit(): void {
+        this._bundlrService.connection$.subscribe((isConnected: boolean) => {
+            this.walletConnected = isConnected;
+        });
+        this.walletConnected = this._bundlrService.isConnected();
+    }
 
     onThumbFileChanged(event: Event) {
         const target = event.target as HTMLInputElement;
@@ -26,7 +44,7 @@ export class UploadComponent implements OnInit {
         this.readFileAsDataURL(file, (result) => thumbElement.setAttribute('src', result as string));
 
         this.readFileAsBuffer(file, async (buffer) => {
-            this.album.thumbBuffer = buffer;
+            this.thumbBuffer = buffer;
         });
     }
 
@@ -48,7 +66,7 @@ export class UploadComponent implements OnInit {
             });
             this.readFileAsBuffer(file, async (buffer) => {
                 try {
-                    addSong.price = (await this._bundlrService.getPrice(buffer.length)).toFixed(6);
+                    addSong.price = (await this._bundlrService.getPrice(buffer.length)).toFixed(5);
                 } catch {}
 
                 addSong.buffer = buffer;
@@ -59,61 +77,102 @@ export class UploadComponent implements OnInit {
             // tags now contains v1, v2 and merged tags
             console.log(tags);
             addSong.title = tags.title;
-            addSong.artist = tags.artist;
+            addSong.artist = tags.artist?.split(',').pop();
             //addSong.duration = tags.duration;
         });
+
+        console.log('this.album.songs', this.album.songs);
     }
 
     async upload() {
         console.log('upload', this.album);
 
-        // upload album thumbnail
-        let rsThumbnail = await this._bundlrService.upload(this.album.thumbBuffer, [
-            { name: 'App-Name', value: 'Arpomus' },
-            { name: 'App-Version', value: '0.1.0' },
-            { name: 'Content-Type', value: 'image' },
-            { name: 'Unix-Time', value: Math.round(Date.now() / 1000).toString() }
-        ]);
-        console.log('rsThumbnail', rsThumbnail.data);
+        const dataBytes =
+            (this.thumbBuffer == null ? 0 : this.thumbBuffer.length) + this.album.songs.reduce((sum, { buffer }) => sum + buffer.length, 0);
+        const dataUploadFee = await this._bundlrService.getPrice(dataBytes);
+        this._dialogService.confirmDialog({ fee: dataUploadFee.toFixed(5) }).subscribe(async (confirmed) => {
+            if (confirmed) {
+                // upload album thumbnail
+                var thumbId = environment.defaultThumbnailId;
+                if (this.thumbBuffer != null) {
+                    let rsThumbnail = await this._bundlrService.upload(this.thumbBuffer, [{ name: 'Content-Type', value: 'image' }]);
+                    console.log('rsThumbnail', rsThumbnail.data);
+                    thumbId = rsThumbnail.data.id;
 
-        // upload album info
-        let rsAlbum = await this._bundlrService.upload(Buffer.from(''), [
-            { name: 'App-Name', value: 'Arpomus' },
-            { name: 'App-Version', value: '0.1.0' },
-            { name: 'Content-Type', value: 'application/json' },
-            { name: 'Data-Type', value: 'album' },
-            { name: 'Unix-Time', value: Math.round(Date.now() / 1000).toString() },
-            
-            { name: 'Title', value: this.album.title },
-            { name: 'Artist', value: this.album.artist },
-            { name: 'Genre', value: this.album.genre },
-            { name: 'Description', value: this.album.description },
-            { name: 'Thumbnail', value: rsThumbnail.data.id }
-        ]);
-        console.log('rsAlbum', rsAlbum.data);
+                    this.log('upload-image', 'image', thumbId, '');
+                }
 
-        // upload album songs
-        for (let i = 0; i < this.album.songs.length; i++) {
-            let song = this.album.songs[i];
-            let rsSong = await this._bundlrService.upload(song.buffer, [
-                { name: 'App-Name', value: 'Arpomus' },
-                { name: 'App-Version', value: '0.1.0' },
-                { name: 'Content-Type', value: 'audio' },
-                { name: 'Data-Type', value: 'song' },
-                { name: 'Unix-Time', value: Math.round(Date.now() / 1000).toString() },
+                // upload album info
+                let rsAlbum = await this._bundlrService.upload(
+                    Buffer.from(
+                        JSON.stringify({
+                            title: this.album.title,
+                            artist: this.album.artist,
+                            genre: this.album.genre,
+                            description: this.album.description,
+                            thumbnail: thumbId
+                        })
+                    ),
+                    [
+                        { name: 'Content-Type', value: 'application/json' },
+                        { name: 'Data-Type', value: 'album' },
 
-                { name: 'Title', value: song.title },
-                { name: 'Artist', value: song.artist },
-                { name: 'Genre', value: song.genre },
-                { name: 'Duration', value: song.duration.toString() },
-                { name: 'Thumbnail', value: rsThumbnail.data.id },
-                { name: 'Album', value: rsAlbum.data.id },
-                { name: 'Album-Track', value: (i + 1).toString() }
-            ]);
-            console.log('rsSong', rsSong.data);
-        }
+                        { name: 'Keyword-Title', value: this.album.title.toLowerCase() },
+                        { name: 'Keyword-Artist', value: this.album.artist.toLowerCase() },
+                        { name: 'Keyword-Genre', value: this.album.genre.toLowerCase() },
 
-        this._snackBar.open('Upload album successfully', '', { panelClass: ['snackbar-success'] });
+                        { name: 'Title', value: this.album.title },
+                        { name: 'Artist', value: this.album.artist },
+                        { name: 'Genre', value: this.album.genre },
+                        { name: 'Description', value: this.album.description },
+                        { name: 'Thumbnail', value: thumbId }
+                    ]
+                );
+                console.log('rsAlbum', rsAlbum.data);
+                this.log('upload-album', 'application/json', rsAlbum.data.id, this.album.title);
+
+                // upload album songs
+                for (let i = 0; i < this.album.songs.length; i++) {
+                    let song = this.album.songs[i];
+                    let rsSong = await this._bundlrService.upload(song.buffer, [
+                        { name: 'Content-Type', value: 'audio' },
+                        { name: 'Data-Type', value: 'song' },
+
+                        { name: 'Keyword-Title', value: song.title.toLowerCase() },
+                        { name: 'Keyword-Artist', value: song.artist.toLowerCase() },
+                        { name: 'Keyword-Genre', value: this.album.genre.toLowerCase() },
+
+                        { name: 'Title', value: song.title },
+                        { name: 'Artist', value: song.artist },
+                        { name: 'Genre', value: this.album.genre },
+                        { name: 'Duration', value: song.duration.toString() },
+                        { name: 'Thumbnail', value: thumbId },
+                        { name: 'Album', value: rsAlbum.data.id },
+                        { name: 'Album-Track', value: (i + 1).toString() }
+                    ]);
+                    console.log('rsSong', rsSong.data);
+                    this.log('upload-song', 'audio', rsSong.data.id, song.title);
+                }
+
+                this._snackBar.open(`Uploaded album successfully`, null, { duration: 3000, panelClass: ['snackbar-success'] });
+                this.walletCompoment.loadWalletInfo();
+            }
+        });
+    }
+
+    log(type: string, contentType: string, txId: string, description: string) {
+        var transactionCollection = this._firestore.collection(`logs-${this._bundlrService.getAddress()}`);
+        transactionCollection.add({
+            time: Math.round(Date.now() / 1000).toString(),
+            type: type,
+            contentType: contentType,
+            txId: txId,
+            description: description
+        });
+    }
+
+    connectWallet() {
+        this.walletCompoment.openConnectDialog();
     }
 
     getTotalPrice() {
@@ -122,7 +181,7 @@ export class UploadComponent implements OnInit {
             total += parseFloat(song.price);
         });
 
-        return total.toFixed(4);
+        return total.toFixed(5);
     }
 
     readFileAsBuffer(file: File, callback: any) {

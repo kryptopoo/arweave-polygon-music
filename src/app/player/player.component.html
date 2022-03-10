@@ -1,14 +1,17 @@
-<div class="w-full bg-neutral-900 flex items-center justify-between px-3 border-t border-neutral-800" style="height: 10vh">
+<div class="w-full bg-neutral-900 flex items-center justify-between px-3 border-t border-neutral-800"
+    style="height: 10vh">
     <div class="flex items-center w-1/4">
-        
+
         <div class="bg-neutral-800 w-14 h-14 mr-4 flex items-center justify-center">
             <i *ngIf="!state.streamInfo" class="material-icons text-3xl">music_note</i>
-            <img *ngIf="state.streamInfo" [src]="state.streamInfo?.songs[state.streamInfo?.index]?.thumbnail" class="w-full h-full" />
+            <img *ngIf="state.streamInfo" [src]="state.streamInfo?.songs[state.streamInfo?.index]?.thumbnail"
+                class="w-full h-full" />
         </div>
-        
+
         <div>
-            <h1 class="mb-1 text-sm text-white tracking-wide">{{ state.streamInfo?.songs[state.streamInfo?.index]?.title }}</h1>
-            <h2 class="text-xs text-lightest tracking-wide">{{ state.streamInfo?.songs[state.streamInfo?.index]?.artist }}</h2>
+            <h1 class="mb-1 text-sm text-white tracking-wide">{{ state.streamInfo?.songs[state.streamInfo?.index]?.title
+                }}</h1>
+            <h2 class="text-xs tracking-wide">{{ state.streamInfo?.songs[state.streamInfo?.index]?.artist }}</h2>
         </div>
     </div>
 
@@ -33,9 +36,10 @@
         </div>
 
         <div class="w-3/4 flex items-center justify-center">
-            <p class="text-xs text-lightest mr-1">{{ state?.readableCurrentTime }}</p>
-            <mat-slider min="0" step="1" [max]="state?.duration" [value]="state?.currentTime" (input)="onMediaSeed($event)"></mat-slider>
-            <p class="text-xs text-lightest ml-1">{{ state?.readableDuration }}</p>
+            <p class="text-xs mr-1">{{ state?.readableCurrentTime }}</p>
+            <mat-slider min="0" step="1" [max]="state?.duration" [value]="state?.currentTime"
+                (input)="onMediaSeed($event)"></mat-slider>
+            <p class="text-xs ml-1">{{ state?.readableDuration }}</p>
         </div>
     </div>
 

@@ -5,6 +5,7 @@ import { SearchComponent } from './search/search.component';
 import { YourLibraryComponent } from './your-library/your-library.component';
 import { PlaylistComponent } from './playlist/playlist.component';
 import { UploadComponent } from './upload/upload.component';
+import { TransactionLogsComponent } from './transaction-logs/transaction-logs.component';
 
 const routes: Routes = [
     { path: '', component: HomeComponent },
@@ -12,7 +13,8 @@ const routes: Routes = [
     { path: 'library', component: YourLibraryComponent },
     { path: 'playlist/:id', component: PlaylistComponent },
     { path: 'album/:id', component: PlaylistComponent },
-    { path: 'upload', component: UploadComponent }
+    { path: 'upload', component: UploadComponent },
+    { path: 'transaction-logs', component: TransactionLogsComponent }
 ];
 
 @NgModule({

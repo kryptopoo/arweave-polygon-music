@@ -1,0 +1,21 @@
+<div class="flex items-start justify-between mb-4">
+    <h2 mat-dialog-title>Confirm</h2>
+    <button mat-icon-button mat-dialog-close class="-mt-2 -mr-2">
+        <mat-icon>close</mat-icon>
+    </button>
+</div>
+
+<div mat-dialog-content >
+    <div >
+        By proceeding, you agree to pay a fee 
+        <span class="font-semibold text-green-550">{{data?.fee}} MATIC</span> to upload data to Arweare. 
+    </div>
+    <div class="mt-2 mb-4">
+        Are you sure?
+    </div>
+</div>
+
+<div mat-dialog-actions [align]="'end'">
+    <button mat-raised-button [mat-dialog-close]="false">No</button>
+    <button mat-raised-button color="accent" [mat-dialog-close]="true">Yes</button>
+</div>

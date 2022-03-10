@@ -21,9 +21,9 @@ body {
 }
 
 .playlist-header {
-    height: 30vh;
+    height: 20vh;
     max-height: 500px;
-    min-height: 340px;
+    min-height: 280px;
     color: #fff;
     display: -webkit-box;
     display: -ms-flexbox;
@@ -55,21 +55,54 @@ body {
     margin-top: -0.5em !important;;
 }
 
+.mat-dialog-container {
+    background-color: rgb(38, 38, 38);
+}
+
 // audio::-webkit-media-controls-play-button,
 // audio::-webkit-media-controls-panel {
 //   background-color: #a0276e;
 //   color: #a0276e;
 // }
 
+.mat-snack-bar-container {
+    max-width: 80vw !important;
+    margin-bottom: 5.5rem !important;
+}
+
 .snackbar-success {
-    color: green;
+    // background-color: rgb(22, 163, 74) !important;
+    // color: rgb(245, 245, 245) !important;
+
+    // color: #155724!important;
+    // background-color: #d4edda!important;
+
+    background-color: rgb(38, 38, 38) !important;
+    color: rgb(245, 245, 245) !important;
+    // color: rgb(22, 163, 74) !important
+
+    // background-color: rgb(30, 30, 30) !important;
+    // color: rgb(5 122 85) !important;
+
+    // color: green;
+
+    
+}
+
+.text-green-550 {
+    color: rgb(29, 185, 84);
 }
 
 .snackbar-error {
-    color: red;
+    background-color: red !important;
+    color: #fff !important;
 }
 
 .bg-neutral-850 {
     // 23 38   
     background-color: rgb(30, 30, 30);
+}
+
+.mat-menu-panel {
+    background-color: rgb(30, 30, 30) !important;
 }

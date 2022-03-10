@@ -3,7 +3,10 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,
+  appName: 'Arpomus',
+  appVersion: '0.1.4',
+  defaultThumbnailId: 'UhCQ3PYMY-Tob6zwiXC5yTANA2Amc9KI-0GFPFTUGBI'
 };
 
 /*

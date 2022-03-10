@@ -9,116 +9,79 @@
             (click)="tab = 'playlists'">Playlists</button>
     </div>
     <div>
-        <app-wallet></app-wallet>
+        <app-wallet #walletCompoment></app-wallet>
     </div>
 </div>
 
-<div *ngIf="!walletConnected">
-    <div class="w-full mt-44 flex flex-col items-center justify-center">
-        <div class="text-3xl font-semibold">Your wallet is not connected!</div>
-        <button
-            class="w-48 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-6 p-2">
-            <i class="material-icons mr-2">account_balance_wallet</i>
-            Connect Wallet
-        </button>
-    </div>
-</div>
+<!-- content -->
+<div class="overflow-y-scroll scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900"
+    style="height: 80vh">
+    <mat-progress-bar mode="indeterminate" color="accent" *ngIf="loading"></mat-progress-bar>
 
-<div *ngIf="walletConnected">
-    <!-- songs -->
-    <div class="px-6 py-3" *ngIf="tab == 'songs'">
-        <div class="mb-6">
-            <h1 class="text-2xl font-semibold text-white">Songs</h1>
+    <div *ngIf="!walletConnected">
+        <div class="w-full mt-44 flex flex-col items-center justify-center">
+            <div class="text-3xl font-semibold">Your wallet is not connected!</div>
+            <button (click)="connectWallet()"
+                class="w-48 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-6 p-2">
+                <i class="material-icons mr-2">account_balance_wallet</i>
+                Connect Wallet
+            </button>
         </div>
+    </div>
 
+    <div *ngIf="walletConnected">
         <!-- songs -->
-        <!-- <div class="w-full grid gap-6 grid-cols-8" *ngIf="songs.length > 0">
-        <button class="w-48 h-64 relative group" *ngFor="let song of songs" (click)="playSong(song)">
-            <div class="absolute w-full h-full flex items-end justify-end opacity-0 group-hover:opacity-100">
-                <div class="rounded-full h-12 w-12 flex items-center justify-center mb-24 mr-6">
-                    <i class="material-icons text-black text-3xl">play_arrow</i>
-                </div>
+        <div class="px-6 py-3" *ngIf="tab == 'songs'">
+            <div class="mb-6">
+                <h1 class="text-2xl font-semibold text-white">Songs</h1>
             </div>
-            <div class="w-full h-full bg-neutral-900 p-5 rounded-md shadow-md group-hover:bg-neutral-800">
-                <img [src]="song.thumbnail" class="h-36 w-full rounded-md shadow mb-4" />
-                <p class="text-left text-base font-semibold text-white ">{{ song.title }}</p>
-                <p class="text-left text-xs font-semibold text-neutral-400 ">{{ song.artist }}</p>
-            </div>
-        </button>
-    </div> -->
-        <app-data-grid [items]="songs" *ngIf="songs.length > 0"></app-data-grid>
 
-        <div class="w-full mt-44 flex flex-col items-center justify-center" *ngIf="songs.length == 0">
-            <div class="text-3xl font-semibold">Not Found</div>
-            <button
-                class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2">
-                <i class="material-icons mr-2">cloud_upload</i>
-                Upload
-            </button>
+            <app-data-grid [items]="songs" *ngIf="songs.length > 0"></app-data-grid>
+
+            <div class="w-full mt-44 flex flex-col items-center justify-center" *ngIf="songs.length == 0">
+                <div class="text-3xl font-semibold">Not Found</div>
+                <button
+                    class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2">
+                    <i class="material-icons mr-2">cloud_upload</i>
+                    Upload
+                </button>
+            </div>
+        </div>
+
+        <!-- albums -->
+        <div class="px-6 py-3" *ngIf="tab == 'albums'">
+            <div class="mb-6">
+                <h1 class="text-2xl font-semibold text-white">Albums</h1>
+            </div>
+
+            <app-data-grid [items]="albums" *ngIf="albums.length > 0"></app-data-grid>
+
+            <div class="w-full mt-44 flex flex-col items-center justify-center" *ngIf="albums.length == 0">
+                <div class="text-3xl font-semibold">Not Found</div>
+                <button
+                    class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2">
+                    <i class="material-icons mr-2">cloud_upload</i>
+                    Upload
+                </button>
+            </div>
+        </div>
+
+        <!-- playlists -->
+        <div class="px-6 py-3" *ngIf="tab == 'playlists'">
+            <div class="mb-6">
+                <h1 class="text-2xl font-semibold text-white">Playlists</h1>
+            </div>
+            <app-data-grid [items]="playlists" *ngIf="playlists.length > 0"></app-data-grid>
+
+            <div class="w-full mt-44 flex flex-col items-center justify-center" *ngIf="playlists.length == 0">
+                <div class="text-3xl font-semibold">Not Found</div>
+                <button
+                    class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2">
+                    <i class="material-icons mr-2">cloud_upload</i>
+                    Upload
+                </button>
+            </div>
         </div>
     </div>
 
-    <!-- albums -->
-    <div class="px-6 py-3" *ngIf="tab == 'albums'">
-        <div class="mb-6">
-            <h1 class="text-2xl font-semibold text-white">Albums</h1>
-        </div>
-
-        <!-- <div class="w-full gap-6 grid-cols-8" *ngIf="albums.length > 0">
-        <button class="w-48 h-64 relative group" *ngFor="let album of albums" [routerLink]="[album.url]">
-            <div class="absolute w-full h-full flex items-end justify-end opacity-0 group-hover:opacity-100">
-                <div class="rounded-full h-12 w-12 flex items-center justify-center mb-24 mr-6">
-                    <i class="material-icons text-black text-3xl">play_arrow</i>
-                </div>
-            </div>
-            <div class="w-full h-full bg-neutral-900 p-5 rounded-md shadow-md group-hover:bg-neutral-800">
-                <img [src]="album.thumbnail" class="h-36 w-full rounded-md shadow mb-4" />
-                <p class="text-left text-base font-semibold text-white tracking wide">{{ album.title }}</p>
-                <p class="text-left text-xs font-semibold text-neutral-400 tracking-wide">By {{ album.artist }}</p>
-            </div>
-        </button>
-    </div> -->
-        <app-data-grid [items]="albums" *ngIf="albums.length > 0"></app-data-grid>
-
-        <div class="w-full mt-44 flex flex-col items-center justify-center" *ngIf="albums.length == 0">
-            <div class="text-3xl font-semibold">Not Found</div>
-            <button
-                class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2">
-                <i class="material-icons mr-2">cloud_upload</i>
-                Upload
-            </button>
-        </div>
-    </div>
-
-    <!-- playlists -->
-    <div class="px-6 py-3" *ngIf="tab == 'playlists'">
-        <div class="mb-6">
-            <h1 class="text-2xl font-semibold text-white">Playlists</h1>
-        </div>
-
-        <!-- <div class="w-full grid gap-6 grid-cols-8" *ngIf="playlists.length > 0">
-        <button class="w-48 h-64 relative group" *ngFor="let playlist of playlists" (click)="playPlaylist(playlist)">
-            <div class="absolute w-full h-full flex items-end justify-end opacity-0 group-hover:opacity-100">
-                <div class="rounded-full h-12 w-12 flex items-center justify-center mb-24 mr-6">
-                    <i class="material-icons text-black text-3xl">play_arrow</i>
-                </div>
-            </div>
-            <div class="w-full h-full bg-neutral-900 p-5 rounded-md shadow-md group-hover:bg-neutral-800">
-                <img [src]="playlist.thumb" class="h-36 w-full rounded-md shadow mb-4" />
-                <p class="text-left text-base font-semibold text-white tracking wide">{{ playlist.title }}</p>
-                <p class="text-left text-xs font-semibold text-neutral-400 tracking-wide">By {{ playlist.creator }}</p>
-            </div>
-        </button>
-    </div> -->
-        <app-data-grid [items]="playlists" *ngIf="playlists.length > 0"></app-data-grid>
-
-        <div class="w-full mt-44 flex flex-col items-center justify-center" *ngIf="playlists.length == 0">
-            <div class="text-3xl font-semibold">Not Found</div>
-            <button
-                class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2">
-                <i class="material-icons mr-2">cloud_upload</i>
-                Upload
-            </button>
-        </div>
-    </div>
 </div>

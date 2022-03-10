@@ -1,108 +1,111 @@
 <div class="bg-black h-screen">
-  <div class="flex" style="height: 90vh;">
-    <!-- sidenav -->
-    <div class="w-56 bg-black h-full flex-none">
-      <div class="p-6">
-        <img src="" class="h-10">
-      </div>
-      <div class="mx-2">
-        <button class="w-full rounded px-3 py-2 flex items-center justify-start" [routerLink]="['']">
-          <i class="material-icons pr-3">home</i>
-          <p>Home</p>
-        </button>
-        <button class="w-full rounded px-3 py-2 flex items-center justify-start"  [routerLink]="['/search']">
-          <i class="material-icons pr-3">search</i>
-          <p>Search</p>
-        </button>
-        <button class="w-full rounded px-3 py-2 flex items-center justify-start"   [routerLink]="['/library']">
-          <i class="material-icons pr-3">library_music</i>
-          <p>Your Library</p>
-        </button>
-      </div>
+    <div class="flex" style="height: 90vh">
+        <!-- sidenav -->
+        <div class="w-52 bg-black h-full flex-none text-sm">
+            <div class="px-4 py-4 flex items-center justify-start">
+                <!-- <img src="" class="h-10"> -->
+                <i class="material-icons text-5xl mr-1">play_circle_filled</i>
+                <p class="text-2xl font-semibold">Arpomus</p>
+            </div>
+            <div class="mx-5 text-gray-300">
+                <button class="hover:text-white w-full rounded py-2 flex items-center justify-start" [routerLink]="['']">
+                    <i class="material-icons pr-3">home</i>
+                    <p>Home</p>
+                </button>
+                <button class="hover:text-white w-full rounded py-2 flex items-center justify-start" [routerLink]="['/search']">
+                    <i class="material-icons pr-3">search</i>
+                    <p>Search</p>
+                </button>
+                <button class="hover:text-white w-full rounded py-2 flex items-center justify-start" [routerLink]="['/library']">
+                    <i class="material-icons pr-3">library_music</i>
+                    <p>Your Library</p>
+                </button>
+            </div>
 
-      <div class="mx-5 mt-8">
-        <button class="flex items-center justify-start mb-4"  [routerLink]="['/upload']" >
-          <i class="material-icons h-6 w-6 mr-3 bg-white text-gray-900">cloud_upload</i>
-          <p class="text-sm text-white font-semibold">Upload Song</p>
-        </button>
-        <button class="flex items-center justify-start" (click)="openCreatePlaylistDialog()">
-          <i class="material-icons h-6 w-6 mr-3 bg-white text-gray-900">add</i>
-          <p class="text-sm text-white font-semibold">Create Playlist</p>
-        </button>
-      </div>
-      
-      <div class="border-b border-neutral-800 m-5"> </div>
-      <div class="mx-5">
-        <div class="w-full h-24 overflow-y-scroll">
-          <p class="text-lightest hover:text-white text-sx py-1">Playlist 1</p>
+            <div class="mx-5 mt-8 text-gray-300" >
+                <button class="hover:text-white flex items-center justify-start mb-4" [routerLink]="['/upload']">
+                    <i class="material-icons pr-3">cloud_upload</i>
+                    <p>Upload Album</p>
+                </button>
+                <button class="hover:text-white  flex items-center justify-start" (click)="openCreatePlaylistDialog()">
+                    <i class="material-icons bg-gray-300 hover:bg-white mr-3 text-neutral-800">add</i>
+                    <p>Create Playlist</p>
+                </button>
+            </div>
+
+            <div class="border-b border-neutral-800 m-5"></div>
+            <div class="mx-5 text-gray-300">
+                <div style="height: 42vh" class="w-full overflow-y-scroll scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900">
+                    <a class="block hover:text-white text-sx py-1" *ngFor="let playlist of playlists" 
+                    [routerLink]="['/playlist', playlist.id]" >{{ playlist.name }} </a>
+                </div>
+            </div>
+
         </div>
-      </div>
+
+        <!-- main -->
+        <div class="w-full h-full bg-neutral-900">
+            <!-- content -->
+            <router-outlet></router-outlet>
+        </div>
     </div>
 
-    <!-- main -->
-    <div class="w-full h-full relative bg-neutral-900">
-     
-      <!-- content -->
-      <router-outlet></router-outlet>
+    <!-- player -->
+    <div>
+        <app-player></app-player>
     </div>
-  </div>
-
-  <!-- player -->
-  <div>
-    <app-player></app-player>
-  </div>
 </div>
 
-
 <ng-template #createPlaylistDialogRef>
-  <div>
-      <!-- <h2 mat-dialog-title></h2>
+    <div>
+        <!-- <h2 mat-dialog-title></h2>
       <button mat-button mat-dialog-close>X</button> -->
 
-      <div class="flex items-start justify-between mb-4">
-        <h2  mat-dialog-title>Create Playlist</h2>
-        <button mat-icon-button aria-label="close dialog" mat-dialog-close>
-          <mat-icon>close</mat-icon>
-        </button>
-      </div>
+        <div class="flex items-start justify-between mb-4">
+            <h2 mat-dialog-title>Create Playlist</h2>
+            <button mat-icon-button mat-dialog-close class="-mt-2 -mr-2">
+                <mat-icon>close</mat-icon>
+            </button>
+        </div>
 
+        <mat-dialog-content>
+            <div class="flex text-sm">
+                <div class="flex items-start h-40 w-40 mr-4">
+                    <img
+                        id="thumb"
+                        src="/assets/images/no-image.png"
+                        class="w-full h-full shadow-md hover:cursor-pointer"
+                        (click)="thumbFile.click()"
+                    />
 
-      <mat-dialog-content>
-        <div class="flex text-sm">
-          <div class="flex items-start h-40 w-40 mr-4">
-              <img id="thumb" src="/assets/images/no-image.png" class="w-full h-full shadow-md" (click)="thumbFile.click()" />
-
-              <input #thumbFile type="file" (change)="onThumbFileChanged($event)" accept="image/*"
-                  style="display: none" />
-          </div>
-          <div class="flex flex-col w-80 py-1">
-              <div>
-                  <mat-form-field appearance="outline" color="accent" class="w-full mb-2">
-                      <mat-label>Name</mat-label>
-                      <input matInput placeholder="Name" [value]="playlist.name">
-                  </mat-form-field>
-              </div>
-              <div>
-                  <mat-form-field appearance="outline" color="accent" class="w-full">
-                      <mat-label>Description</mat-label>
-                      <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5" [value]="playlist.description"></textarea>
-                  </mat-form-field>
-              </div>
-              <div class="mt-2 flex justify-end">
-                <button mat-flat-button color="accent" [mat-dialog-close]="true" class="w-32" cdkFocusInitial (click)="savePlaylist()">Save</button>
-              </div>
-              
-          </div>
-      </div>
-
-      </mat-dialog-content>
-      <mat-dialog-actions align="end">
-         
-         
-          <div class="text-xs mt-4 mb-6 text-left">
-            By proceeding, you agree to give App access to the image you choose to upload. Please make sure you have the right to upload the image.
-          </div>
-      </mat-dialog-actions>
-      
-  </div>
+                    <input #thumbFile type="file" (change)="onThumbFileChanged($event)" accept="image/*" style="display: none" />
+                </div>
+                <div class="flex flex-col w-80 py-1">
+                    <div>
+                        <mat-form-field appearance="outline" color="accent" class="w-full mb-2">
+                            <mat-label>Name</mat-label>
+                            <input matInput placeholder="Name" required [(ngModel)]="playlist.name"  />
+                        </mat-form-field>
+                    </div>
+                    <div>
+                        <mat-form-field appearance="outline" color="accent" class="w-full">
+                            <mat-label>Description</mat-label>
+                            <textarea
+                                matInput
+                                cdkTextareaAutosize
+                                cdkAutosizeMinRows="3"
+                                cdkAutosizeMaxRows="5"
+                                [(ngModel)]="playlist.description"
+                            ></textarea>
+                        </mat-form-field>
+                    </div>
+                    <div class="mt-2 flex justify-end">
+                        <button mat-flat-button color="accent" [mat-dialog-close]="true" class="w-32" cdkFocusInitial (click)="savePlaylist()">
+                            Save
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </mat-dialog-content>
+    </div>
 </ng-template>
