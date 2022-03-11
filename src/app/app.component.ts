@@ -104,7 +104,7 @@ export class AppComponent implements OnInit {
         const file: File = (target.files as FileList)[0];
         console.log(file);
 
-        const thumbElement = document.getElementById(`thumb`);
+        const thumbElement = document.getElementById(`playlist-thumb`);
         this.readFileAsDataURL(file, (result) => thumbElement.setAttribute('src', result as string));
 
         this.readFileAsBuffer(file, async (buffer) => {

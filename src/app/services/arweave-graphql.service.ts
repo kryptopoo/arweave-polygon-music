@@ -20,7 +20,7 @@ export class ArweaveGraphqlService {
     queryByTags(tags: ArweaveGraphqlTag[], owner: string = ''): Observable<any> {
         {
             tags.push({ name: 'App-Name', values: [environment.appName] });
-            //tags.push({ name: 'App-Version', values: [environment.appVersion] });
+            tags.push({ name: 'App-Version', values: [environment.appVersion] });
 
             let tagsJson = '';
             tagsJson += '[';
