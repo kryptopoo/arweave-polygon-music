@@ -1,9 +1,14 @@
 {
   "name": "arweave-polygon-music",
-  "version": "0.0.0",
+  "version": "0.1",
+  "engines": {
+		"node": "14.x",
+		"npm": "6.x"
+	},
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "heroku-postbuild": "ng build --prod",
+    "start": "node server.js",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
