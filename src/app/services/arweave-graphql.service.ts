@@ -104,6 +104,7 @@ export class ArweaveGraphqlService {
             url: `https://arweave.net/${node.id}`,
             type: tags['Data-Type'],
             duration: tags['Duration'],
+            creator: tags['Creator'],
             owner: node.owner.address
         };
 

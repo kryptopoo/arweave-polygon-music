@@ -15,6 +15,8 @@ The name **“Arpomus”** is a mixture of the words “**Ar**wave”, “**Po**
 
 ### Live Demo
 
+https://arpomus.herokuapp.com
+
 ### Screenshots
 
 <img src="https://user-images.githubusercontent.com/44108463/157676764-8ac526c4-7bc9-4d21-87af-9c6b85286d08.PNG" width="800"/>
@@ -30,6 +32,7 @@ The name **“Arpomus”** is a mixture of the words “**Ar**wave”, “**Po**
 
 
 ## Getting Started
+Run development
     ```
-    npm start
+    ng serve
     ```

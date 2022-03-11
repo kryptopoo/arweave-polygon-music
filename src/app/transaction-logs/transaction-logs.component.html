@@ -13,7 +13,7 @@
     style="height: 80vh">
 
     <div class="mx-6 flex items-center text-sm mb-4 border-b-neutral-700">
-        <div class="w-24 flex items-center justify-center ">
+        <div class="w-32 flex items-center justify-center ">
             Time
         </div>
         <div class="w-32 flex items-center justify-center">
@@ -31,8 +31,8 @@
     </div>
 
     <div class="mx-6 flex items-center text-sm" *ngFor="let tx of transactions; let i = index">
-        <div class="w-24 ">
-            {{tx.time}}
+        <div class="w-32 ">
+            {{tx.time * 1000 | date:'short'}}
         </div>
         <div class="w-32">
             {{tx.type}}

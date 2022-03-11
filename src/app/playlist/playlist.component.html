@@ -20,7 +20,7 @@
                 <div class="text-6xl font-bold mt-2 mb-4">{{ playlist.title }}</div>
                 <div class="text-base">{{ playlist.description }}</div>
                 <div class="text-sm">
-                    <span class="font-semibold">{{ playlist.owner }}</span> • {{ playlist.songs.length }} songs •
+                    <span class="font-semibold">{{ playlist.creator }}</span> • {{ playlist?.songs.length }} songs •
                     <span class="text-neutral-300">{{ playlist.duration }}</span>
                 </div>
             </div>
@@ -30,8 +30,10 @@
     <div class="overflow-y-scroll scrollbar-thin scrollbar-thumb-neutral-700 scrollbar-track-neutral-900"
         style="height: 52vh;">
         <div class="px-8 py-3 flex">
-            <button><i class="material-icons text-6xl text-green-500"
+            <button *ngIf="!playingSongId"><i class="material-icons text-6xl text-green-500"
                     (click)="playPlaylist()">play_circle_filled</i></button>
+            <button *ngIf="playingSongId"><i class="material-icons text-6xl text-green-500"
+                (click)="pause()">pause_circle_filled</i></button>
         </div>
         <div class="px-8">
             <div class="flex p-2">
@@ -43,12 +45,15 @@
             <div class="flex p-2 hover:bg-neutral-700 hover:rounded-sm hover:cursor-pointer"
                 *ngFor="let song of playlist.songs; let i = index" (dblclick)="playSong(song)">
                 <div class="w-12 flex items-center justify-center">
-                    {{ i + 1 }}
+                    <span *ngIf="playingSongId != song.id">{{ i + 1 }}</span>
+                    <img *ngIf="playingSongId == song.id"  width="14" height="14" alt="" src="/assets/images/equaliser-animated-green.gif">
                 </div>
                 <div class="w-2/4 flex">
                     <img [src]="song.thumbnail" class="w-10 h-10 mr-4" />
+                    
                     <div>
-                        <div class="text-base">{{ song.title }}</div>
+                        <div class="text-base" *ngIf="playingSongId != song.id">{{ song.title }}</div>
+                        <div class="text-base text-green-600" *ngIf="playingSongId == song.id">{{ song.title }}</div>
                         <div class="text-sm text-neutral-400">{{ song.artist }}</div>
                     </div>
                 </div>

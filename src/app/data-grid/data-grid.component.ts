@@ -14,6 +14,7 @@ export interface DataGridItem {
     type: string;
     duration: string;
     owner: string;
+    creator: string;
 }
 
 @Component({

@@ -15,7 +15,7 @@ export class TransactionLogsComponent implements OnInit {
 
   ngOnInit(): void {
     var transactions = this._firestore.collection(`logs-${this._bundlrService.getAddress()}`).valueChanges().subscribe(trans => {
-      this.transactions = trans;
+      this.transactions = trans.sort((a: any, b: any) => a.time > b.time ? -1 : 1);
     }); 
   }
 

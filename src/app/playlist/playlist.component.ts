@@ -11,12 +11,10 @@ import moment from 'moment';
 })
 export class PlaylistComponent implements OnInit {
     songs: any[];
-    playlist: any = { title: null, description: null, artist: null, thumbnail: null, creator: null, duration: null, song: [] };
+    playlist: any = { title: null, description: null, artist: null, thumbnail: null, creator: null, duration: 0, songs: [] };
+    playingSongId: string = null;
 
     constructor(private route: ActivatedRoute, private audioService: AudioService, private arweaveGrapqlService: ArweaveGraphqlService) {}
-
-    ngOnChanges(): void {
-    }
 
     ngOnInit(): void {
         const id = this.route.snapshot.paramMap.get('id');
@@ -38,6 +36,7 @@ export class PlaylistComponent implements OnInit {
                     thumbnail: `https://arweave.net/${tags['Thumbnail']}`,
                     songs: [],
                     owner: edges[0].node.owner.address,
+                    creator: tags['Creator'],
                     duration: 0
                 };
 
@@ -49,9 +48,6 @@ export class PlaylistComponent implements OnInit {
                 if (this.playlist.type == 'playlist') {
                     queryTags.push({ name: 'Playlist', values: [id] });
                     queryTags.push({ name: 'Data-Type', values: ['playlist-song'] });
-
-                    // // for testing
-                    // queryTags.push({ name: 'Data-Type', values: ['song'] });
                 }
 
                 this.arweaveGrapqlService.queryByTags(queryTags).subscribe((rsSongs) => {
@@ -64,7 +60,7 @@ export class PlaylistComponent implements OnInit {
 
                         // audio data
                         //var songUrl = this.playlist.type == 'playlist' ? `https://arweave.net/${tags['Song']}` : `https://arweave.net/${edge.node.id}`;
-                        var songUrl = `https://arweave.net/${edge.node.id}`
+                        var songUrl = `https://arweave.net/${edge.node.id}`;
                         if (tags['Song']) songUrl = `https://arweave.net/${tags['Song']}`;
 
                         this.playlist.songs.push({
@@ -74,35 +70,45 @@ export class PlaylistComponent implements OnInit {
                             duration: this.secondsToTime(tags['Duration']),
                             durationValue: tags['Duration'],
                             thumbnail: `https://arweave.net/${tags['Thumbnail']}`,
-                            url: songUrl,
-                            
+                            url: songUrl
                         });
                     });
 
-                    this.playlist.duration = this.secondsToTime(this.playlist.songs.reduce((sum, { durationValue }) => sum + parseFloat(durationValue), 0));
+                    this.playlist.duration = this.secondsToTime(
+                        this.playlist.songs.reduce((sum, { durationValue }) => sum + parseFloat(durationValue), 0)
+                    );
                 });
             });
         });
+
+        this.audioService.getState().subscribe(state => {
+            if (!state.playing) {
+                this.playingSongId = null;
+            }
+        })
     }
 
     secondsToTime(val: any) {
         var secs = val;
-        if ((typeof val === 'string' || val instanceof String))
-            secs = parseFloat(val.toString());
+        if (typeof val === 'string' || val instanceof String) secs = parseFloat(val.toString());
 
         return moment.utc(secs * 1000).format('HH:mm:ss');
     }
 
     playSong(song: any): void {
-        console.log('playsong', song);
+        this.playingSongId = song.id;
         let streamInfo: StreamInfo = { index: 0, songs: [song] };
-        this.audioService.playStream(streamInfo).subscribe((events) => {
-        });
+        this.audioService.playStream(streamInfo).subscribe((events) => {});
     }
 
     playPlaylist(): void {
+        this.playingSongId = this.playlist.songs[0].id;
         let streamInfo: StreamInfo = { index: 0, songs: this.playlist.songs };
-        this.audioService.playStream(streamInfo).subscribe((events) => {
-        });
+        this.audioService.playStream(streamInfo).subscribe((events) => {});
+    }
+
+    pause(): void {
+        this.playingSongId = null;
+        this.audioService.pause();
     }
 }
