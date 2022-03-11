@@ -2,9 +2,9 @@
   "name": "arweave-polygon-music",
   "version": "0.1.0",
   "engines": {
-		"node": "14.x",
-		"npm": "6.x"
-	},
+    "node": "14.x",
+    "npm": "6.x"
+  },
   "scripts": {
     "ng": "ng",
     "heroku-postbuild": "ng build --prod",
@@ -32,6 +32,7 @@
     "assert": "^2.0.0",
     "browserify-zlib": "^0.2.0",
     "crypto-browserify": "^3.12.0",
+    "express": "^4.17.3",
     "firebase": "^9.6.8",
     "fs-extra": "^10.0.1",
     "fs-web": "^1.0.1",
