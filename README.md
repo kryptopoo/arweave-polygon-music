@@ -11,7 +11,7 @@ The name **“Arpomus”** is a mixture of the words “**Ar**wave”, “**Po**
 
 ### Video Demo
 
-[![Arpomus Demo](https://img.youtube.com/vi/YKX3VDTqpnY/0.jpg)](https://www.youtube.com/watch?v=YKX3VDTqpnY)
+[![Arpomus Demo](https://img.youtube.com/vi/CLAB9Jrk4CE/0.jpg)](https://www.youtube.com/watch?v=CLAB9Jrk4CE)
 
 ### Live Demo
 
@@ -19,16 +19,16 @@ https://arpomus.herokuapp.com
 
 ### Screenshots
 
-<img src="https://user-images.githubusercontent.com/44108463/157676764-8ac526c4-7bc9-4d21-87af-9c6b85286d08.PNG" width="800"/>
+<img src="https://user-images.githubusercontent.com/44108463/158387433-5d7a014c-1f98-43c8-8da6-ef853e416c7e.PNG" width="800"/>
 
 
 <img src="https://user-images.githubusercontent.com/44108463/157676770-c273def5-90e6-4c5e-9821-a5490f53a39d.PNG" width="800"/>
 
 
-<img src="https://user-images.githubusercontent.com/44108463/157676771-77c2e9e1-4670-47c5-954d-04d0a42a42b4.PNG" width="800"/>
+<img src="https://user-images.githubusercontent.com/44108463/158387448-745039c8-f308-4541-ae74-64bba1bc7974.PNG" width="800"/>
 
 
-<img src="https://user-images.githubusercontent.com/44108463/157676767-f25daa21-e876-43b8-abdd-a552a85b6011.PNG" width="800"/>
+<img src="https://user-images.githubusercontent.com/44108463/158387444-af671d58-93dc-42b4-bca9-65ac8a882fbd.PNG" width="800"/>
 
 
 ## Getting Started
