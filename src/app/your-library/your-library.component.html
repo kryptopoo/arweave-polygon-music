@@ -41,7 +41,7 @@
             <div class="w-full mt-44 flex flex-col items-center justify-center" *ngIf="songs.length == 0">
                 <div class="text-3xl font-semibold">Not Found</div>
                 <button
-                    class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2">
+                    class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2" [routerLink]="['/upload']">
                     <i class="material-icons mr-2">cloud_upload</i>
                     Upload
                 </button>
@@ -59,7 +59,7 @@
             <div class="w-full mt-44 flex flex-col items-center justify-center" *ngIf="albums.length == 0">
                 <div class="text-3xl font-semibold">Not Found</div>
                 <button
-                    class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2">
+                    class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2" [routerLink]="['/upload']">
                     <i class="material-icons mr-2">cloud_upload</i>
                     Upload
                 </button>
@@ -76,7 +76,7 @@
             <div class="w-full mt-44 flex flex-col items-center justify-center" *ngIf="playlists.length == 0">
                 <div class="text-3xl font-semibold">Not Found</div>
                 <button
-                    class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2">
+                    class="w-40 bg-neutral-100 text-neutral-900 shadow rounded-full flex items-center justify-center mt-4 p-2" [routerLink]="['/upload']">
                     <i class="material-icons mr-2">cloud_upload</i>
                     Upload
                 </button>
