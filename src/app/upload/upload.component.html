@@ -2,15 +2,16 @@
 <div class="w-full sticky top-0 py-4 px-6 flex items-center justify-between">
     <div class="flex items-center">
         <h1 class="text-2xl font-semibold">Upload Album</h1>
-        <div class="mx-8 text-gray-300 text-sm"  *ngIf="walletConnected">
-            <button class="hover:text-white w-full rounded py-2 flex items-center justify-start" [routerLink]="['/transaction-logs']">
+        <div class="mx-8 text-gray-300 text-sm" *ngIf="walletConnected">
+            <button class="hover:text-white w-full rounded py-2 flex items-center justify-start"
+                [routerLink]="['/transaction-logs']">
                 <i class="material-icons pr-2">history</i>
                 <p>History</p>
             </button>
         </div>
     </div>
     <div>
-        <app-wallet  #walletCompoment ></app-wallet>
+        <app-wallet #walletCompoment></app-wallet>
     </div>
 </div>
 
@@ -48,22 +49,29 @@
                         <input matInput placeholder="Artist" required [(ngModel)]="album.artist" />
                     </mat-form-field>
 
-                    <mat-form-field appearance="outline" color="accent" class="w-1/4">
+                    <!-- <mat-form-field appearance="outline" color="accent" class="w-1/4">
                         <mat-label>Genre</mat-label>
                         <input matInput placeholder="Genre" required [(ngModel)]="album.genre" />
+                    </mat-form-field> -->
+
+                    <mat-form-field appearance="outline" color="accent" class="w-1/4">
+                        <mat-label>Genre</mat-label>
+                        <mat-select [(ngModel)]="album.genre">
+                            <mat-option *ngFor="let genre of genres" value="{{genre.name}}">{{genre.name}}</mat-option>
+                        </mat-select>
                     </mat-form-field>
                 </div>
                 <div>
                     <mat-form-field appearance="outline" color="accent" class="w-full">
                         <mat-label>Description</mat-label>
                         <textarea matInput cdkTextareaAutosize cdkAutosizeMinRows="3" cdkAutosizeMaxRows="5"
-                        [(ngModel)]="album.description" ></textarea>
+                            [(ngModel)]="album.description"></textarea>
                     </mat-form-field>
                 </div>
 
             </div>
             <div class="flex items-end mb-3 ml-3">
-                <button mat-flat-button color="accent" class="w-44" (click)="upload()">
+                <button mat-flat-button color="accent" class="w-44" (click)="upload()" [disabled]="!canUpload()">
                     <i class="material-icons h-6 w-6 mr-1">cloud_upload</i>
                     Upload Album
                 </button>

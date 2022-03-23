@@ -81,11 +81,13 @@ export class PlaylistComponent implements OnInit {
             });
         });
 
-        this.audioService.getState().subscribe(state => {
+        this.audioService.getState().subscribe((state) => {
             if (!state.playing) {
-                this.playingSongId = null;
+                setTimeout(() => {
+                    this.playingSongId = null;
+                });
             }
-        })
+        });
     }
 
     secondsToTime(val: any) {
@@ -96,15 +98,17 @@ export class PlaylistComponent implements OnInit {
     }
 
     playSong(song: any): void {
-        this.playingSongId = song.id;
         let streamInfo: StreamInfo = { index: 0, songs: [song] };
-        this.audioService.playStream(streamInfo).subscribe((events) => {});
+        this.audioService.playStream(streamInfo).subscribe((events) => {
+            this.playingSongId = song.id;
+        });
     }
 
     playPlaylist(): void {
-        this.playingSongId = this.playlist.songs[0].id;
         let streamInfo: StreamInfo = { index: 0, songs: this.playlist.songs };
-        this.audioService.playStream(streamInfo).subscribe((events) => {});
+        this.audioService.playStream(streamInfo).subscribe((events) => {
+            this.playingSongId = this.playlist.songs[0].id;
+        });
     }
 
     pause(): void {

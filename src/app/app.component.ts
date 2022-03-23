@@ -6,6 +6,7 @@ import { BundlrService } from './services/bundlr.service';
 import { DataGridItem } from './data-grid/data-grid.component';
 import { DialogService } from './services/dialog.service';
 import { environment } from './../environments/environment';
+import { FileHelper } from './app.helper';
 
 @Component({
     selector: 'app-root',
@@ -25,7 +26,8 @@ export class AppComponent implements OnInit {
         private _snackBar: MatSnackBar,
         private _bundlrService: BundlrService,
         private _arweaveGrapqlService: ArweaveGraphqlService,
-        private _dialogService: DialogService
+        private _dialogService: DialogService,
+        private _fileHelper: FileHelper
     ) {}
 
     async ngOnInit() {
@@ -105,31 +107,10 @@ export class AppComponent implements OnInit {
         console.log(file);
 
         const thumbElement = document.getElementById(`playlist-thumb`);
-        this.readFileAsDataURL(file, (result) => thumbElement.setAttribute('src', result as string));
+        this._fileHelper.readFileAsDataURL(file, (result) => thumbElement.setAttribute('src', result as string));
 
-        this.readFileAsBuffer(file, async (buffer) => {
+        this._fileHelper.readFileAsBuffer(file, async (buffer) => {
             this.thumbBuffer = buffer;
         });
-    }
-
-    readFileAsBuffer(file: File, callback: any) {
-        const reader = new FileReader();
-        reader.onload = function () {
-            if (reader.result) {
-                const buffer = Buffer.from(reader.result as ArrayBuffer);
-                callback(buffer);
-            } else {
-                callback(null);
-            }
-        };
-        reader.readAsArrayBuffer(file);
-    }
-
-    readFileAsDataURL(blob: Blob, callback) {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            callback(e.target.result);
-        };
-        reader.readAsDataURL(blob);
     }
 }

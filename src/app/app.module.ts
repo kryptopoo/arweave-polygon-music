@@ -18,6 +18,7 @@ import { MatMenuModule } from  '@angular/material/menu';
 import { MatDialogModule } from  '@angular/material/dialog';
 import { MatProgressBarModule } from  '@angular/material/progress-bar';
 import { MatProgressSpinnerModule } from  '@angular/material/progress-spinner';
+import { MatSelectModule } from '@angular/material/select';
 
 import { AngularFireModule } from '@angular/fire/compat';
 import { AngularFirestoreModule } from '@angular/fire/compat/firestore';
@@ -73,6 +74,7 @@ import { TransactionLogsComponent } from './transaction-logs/transaction-logs.co
     MatDialogModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatSelectModule,
 
     AngularFireModule.initializeApp({
       apiKey: "AIzaSyBC6Zqa-nxEMf7VJ_DXUNhWLXGm01FT0fY",

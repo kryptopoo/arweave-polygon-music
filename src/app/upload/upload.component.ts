@@ -1,13 +1,13 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { DomSanitizer } from '@angular/platform-browser';
 import * as id3 from 'id3js';
-import { totalmem, type } from 'os';
 import { BundlrService } from '../services/bundlr.service';
 import { DialogService } from '../services/dialog.service';
 import { WalletComponent } from '../wallet/wallet.component';
 import { environment } from './../../environments/environment';
 import { AngularFirestore } from '@angular/fire/compat/firestore';
+import { FileHelper } from '../app.helper';
+import { AppConstants } from '../app.constants';
 
 @Component({
     selector: 'app-upload',
@@ -20,12 +20,14 @@ export class UploadComponent implements OnInit {
     walletConnected: boolean = false;
     thumbBuffer: Buffer = null;
     album: any = { title: '', artist: '', genre: '', description: '', songs: [] };
+    genres = AppConstants.Genres;
 
     constructor(
         private _firestore: AngularFirestore,
         private _bundlrService: BundlrService,
         private _snackBar: MatSnackBar,
-        private _dialogService: DialogService
+        private _dialogService: DialogService,
+        private _fileHelper: FileHelper
     ) {}
 
     ngOnInit(): void {
@@ -41,9 +43,9 @@ export class UploadComponent implements OnInit {
         console.log(file);
 
         const thumbElement = document.getElementById(`thumb`);
-        this.readFileAsDataURL(file, (result) => thumbElement.setAttribute('src', result as string));
+        this._fileHelper.readFileAsDataURL(file, (result) => thumbElement.setAttribute('src', result as string));
 
-        this.readFileAsBuffer(file, async (buffer) => {
+        this._fileHelper.readFileAsBuffer(file, async (buffer) => {
             this.thumbBuffer = buffer;
         });
     }
@@ -57,14 +59,14 @@ export class UploadComponent implements OnInit {
 
         setTimeout(() => {
             const audioElement = document.getElementById(`audio-${this.album.songs.length}`);
-            this.readFileAsDataURL(file, (result) => {
+            this._fileHelper.readFileAsDataURL(file, (result) => {
                 audioElement.setAttribute('src', result as string);
 
                 audioElement.onloadedmetadata = function () {
                     addSong.duration = (audioElement as any).duration;
                 };
             });
-            this.readFileAsBuffer(file, async (buffer) => {
+            this._fileHelper.readFileAsBuffer(file, async (buffer) => {
                 try {
                     addSong.price = (await this._bundlrService.getPrice(buffer.length)).toFixed(5);
                 } catch {}
@@ -184,24 +186,11 @@ export class UploadComponent implements OnInit {
         return total.toFixed(5);
     }
 
-    readFileAsBuffer(file: File, callback: any) {
-        const reader = new FileReader();
-        reader.onload = function () {
-            if (reader.result) {
-                const buffer = Buffer.from(reader.result as ArrayBuffer);
-                callback(buffer);
-            } else {
-                callback(null);
-            }
-        };
-        reader.readAsArrayBuffer(file);
-    }
-
-    readFileAsDataURL(blob: Blob, callback) {
-        const reader = new FileReader();
-        reader.onload = async (e) => {
-            callback(e.target.result);
-        };
-        reader.readAsDataURL(blob);
+    canUpload() {
+        var isValid = this.album.title != '' && this.thumbBuffer != null && this.album.genre != '' && this.album.artist != '';
+        this.album.songs.forEach((song) => {
+            if (song.title === '' || song.artist === '')  isValid = false
+        });
+        return isValid;
     }
 }
